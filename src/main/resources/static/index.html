@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全彩列印工廠 | 專屬 3D Q版公仔客製化設計</title>
+    <style>
+        :root {
+            --primary: #111827;      /* 經典電商黑 */
+            --primary-hover: #374151;
+            --line-green: #06c755;
+            --line-hover: #05b04b;
+            --bg: #f3f4f6;           /* 高質感的淺灰底色 */
+            --surface: #ffffff;      /* 卡片純白 */
+            --text: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        /* 滿版頂部導覽列：更像正式官網 */
+        .header-bar {
+            background-color: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+
+        /* 主內容區塊 */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 40px auto; /* 增加上方的呼吸感留白 */
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .content {
+            display: flex;
+            gap: 60px;
+            align-items: stretch; /* 強制左右兩區塊等高 */
+			min-height: 900px;
+        }
+        
+        /* 左側：商品資訊區 (電商風格) */
+        .left-panel {
+            flex: 1;
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            display: flex;           
+            flex-direction: column;
+        }
+
+        .product-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 0 0 10px 0;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+
+        .product-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .features {
+            margin-bottom: 40px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .feature-text h4 {
+            margin: 0 0 4px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .feature-text p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        /* 按鈕優化 */
+        .btn-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--line-green);
+            color: white;
+            text-decoration: none;
+            padding: 18px 30px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 10px 25px rgba(6, 199, 85, 0.3);
+            transition: all 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .btn-line:hover {
+            background-color: var(--line-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(6, 199, 85, 0.4);
+        }
+
+        /* 🔴 右側：多媒體相簿區 */
+        .right-panel {
+            flex: 1.2;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* 照片集與影片之間的距離 */
+			min-width: 0;
+        }
+
+        /* 📸 照片滑動容器 (隱藏捲軸 + 磁吸效果) */
+        .image-slider {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory; /* 開啟 X 軸磁吸滑動 */
+            padding-bottom: 15px; /* 留出陰影的空間，避免被裁切 */
+            scroll-behavior: smooth; /* 讓 JS 觸發的滑動有平滑動畫 */
+            
+            /* 隱藏系統捲軸，保持版面乾淨 */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .image-slider::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera 隱藏捲軸 */
+        }
+
+        /* 滑動中的單張照片設定 */
+        .image-slider img {
+            flex: 0 0 80%; 
+            max-width: 280px; /* 電腦版最大寬度限制 */
+            height: 350px;
+            object-fit: cover;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            scroll-snap-align: center; /* 磁吸停靠在正中間 */
+            transition: transform 0.3s ease;
+        }
+
+        .image-slider img:hover {
+            transform: scale(1.02); /* 滑鼠懸停時微微放大 */
+        }
+
+		/* 🎬 獨立大影片的專屬設定 */
+		        .right-panel video {
+		            width: 85%;           
+					max-width: 500px;
+		            /* 👇 終極對齊的 3 行魔法 👇 */
+		            height: auto;             /* 魔法 1：把原始高度直接歸零，剝奪它的抵抗力 */
+					margin: 0 auto;        /* 讓縮小後的影片，在右邊的版面中自動置中 */
+					            border-radius: 16px;   
+					            box-shadow: 0 12px 30px rgba(0,0,0,0.1); 
+					        }
+		           
+		        
+        
+        /* 📸 照片輪播的外層容器 (用來定位箭頭) */
+        .slider-wrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+			min-width: 0;
+        }
+
+        /* 🏹 左右滑動按鈕設計 (現代電商高質感風格) */
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #e5e7eb;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            font-size: 1.2rem;
+            color: #374151;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .slider-btn:hover {
+            background-color: #ffffff;
+            transform: translateY(-50%) scale(1.1); 
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+
+        /* 將左右按鈕定位在兩側 */
+        .left-btn { left: -15px; }
+        .right-btn { right: -15px; }
+
+        /* 手機版自適應 */
+        @media (max-width: 900px) {
+            .content { flex-direction: column; gap: 30px; }
+            .left-panel { padding: 30px 20px; }
+            .image-slider img { height: 200px; }     
+            .right-panel video { height: 300px; }    
+        }
+        
+        /* 讓按鈕區塊自動推到最底部 */
+        .action-box {
+            margin-top: auto; 
+        }
+    </style>
+</head>
+<body>
+    <div class="header-bar">
+        <div class="header-content">
+            <div class="logo">✨ 全彩列印工廠 ✨</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content">
+            
+            <div class="left-panel">
+                <h1 class="product-title">專屬 3D 潮流公仔<br>特製服務</h1>
+                <p class="product-subtitle">將您的珍貴照片，幻化為獨一無二的潮玩藝術品。無論是愛車、萌寵還是人像，皆可完美客製。</p>
+
+                <div class="features">
+                    <div class="feature-item">
+                        <span class="feature-icon">🤖</span>
+                        <div class="feature-text">
+                            <h4>頂級 AI 特徵捕捉</h4>
+                            <p>採用旗艦級 AI 視覺模型，精準提取照片神韻與細節，拒絕粗糙套版。</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <span class="feature-icon">🎨</span>
+                        <div class="feature-text">
+                            <h4>潮流風格渲染</h4>
+                            <p>獨家調校3D質感，打造極佳的光影與材質表現。</p>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <span class="feature-icon">💬</span>
+                        <div class="feature-text">
+                            <h4>一對一專人親切溝通</h4>
+                            <p>加 LINE 直接傳圖，風格、配件細節皆可微調到您滿意為止。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-box">
+					<a href="/line-connect.html" class="btn-line" target="_blank">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" alt="LINE" style="width: 28px; margin-right: 12px;">
+                        加 LINE 立即傳圖客製
+                    </a>
+                    <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 15px;">
+                        ⚡ 加好友後發送任意貼圖，即可開啟客製對話
+                    </p>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="slider-wrapper">
+                    <button class="slider-btn left-btn" onclick="slideLeft()">&#10094;</button>
+
+                    <div class="image-slider" id="imageSlider">
+                        <img src="/external-images/hero-sample.jpg" alt="3D 公仔展示 1">
+                        <img src="/external-images/hero2-sample.jpg" alt="3D 公仔展示 2">
+                        <img src="/external-images/hero3-sample.jpg" alt="3D 公仔展示 3">
+                        <img src="/external-images/hero4-sample.jpg" alt="3D 公仔展示 4">
+                        <img src="/external-images/hero5-sample.jpg" alt="3D 公仔展示 5">
+                        <img src="/external-images/hero6-sample.jpg" alt="3D 公仔展示 6">
+                        <img src="/external-images/hero7-sample.jpg" alt="3D 公仔展示 7">
+                    </div>
+
+                    <button class="slider-btn right-btn" onclick="slideRight()">&#10095;</button>
+                </div>
+                
+                <video src="/external-images/demo-video.mp4" autoplay loop muted playsinline controls></video>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function slideLeft() {
+            const slider = document.getElementById('imageSlider');
+            slider.scrollBy({ left: -300, behavior: 'smooth' });
+        }
+
+        function slideRight() {
+            const slider = document.getElementById('imageSlider');
+            slider.scrollBy({ left: 300, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
